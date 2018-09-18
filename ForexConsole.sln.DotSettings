@@ -143,4 +143,5 @@
 &#xD;
 			// Assert&#xD;
 &#xD;
-		}</s:String></wpf:ResourceDictionary>
+		}</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=forex/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
