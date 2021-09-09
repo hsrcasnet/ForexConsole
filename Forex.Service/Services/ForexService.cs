@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Forex.Service.Model;
@@ -17,17 +18,25 @@ namespace Forex.Service.Services
             this.httpClient = new HttpClient();
         }
 
-        public async Task<IEnumerable<Quote>> GetQuotes(string[] pairs)
+        public async Task<IEnumerable<QuoteDto>> GetQuotesAsync(string[] pairs)
         {
+            // Send API request
             var apiKey = this.forexServiceConfiguration.ApiKey;
             var pairsString = string.Join(",", pairs);
-            var uri = $"https://forex.1forge.com/1.0.3/quotes?pairs={pairsString}&api_key={apiKey}";
+            var uri = $"https://free.currconv.com/api/v7/convert?q={pairsString}&apiKey={apiKey}";
             var httpResponseMessage = await this.httpClient.GetAsync(uri);
             httpResponseMessage.EnsureSuccessStatusCode();
 
+            // Read request payload and transform JSON to DTO object
             var jsonResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-            var quotes = await Task.Run(() => JsonConvert.DeserializeObject<IEnumerable<Quote>>(jsonResponse));
-            return quotes;
+            var rootObject = JsonConvert.DeserializeObject<ConvertResponseDto>(jsonResponse);
+
+            var quoteDtos = rootObject.Results.CurrencyList.Select(c =>
+            {
+                var quoteDto = c.Value.ToObject<QuoteDto>();
+                return quoteDto;
+            }).ToList();
+            return quoteDtos;
         }
     }
 }

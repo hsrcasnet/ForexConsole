@@ -10,18 +10,18 @@ namespace Forex.Console
         public static async Task Main(string[] args)
         {
             IForexService forexService = new ForexService(new ForexServiceConfiguration());
-            var currencyPairs = new[] { "CHFUSD", "USDCHF", "CHFEUR", "EURCHF" };
+            var currencyPairs = new[] { "CHF_EUR", "EUR_CHF" };
 
             do
             {
                 System.Console.WriteLine($"GetQuotes @ {DateTime.Now:s}");
-                var quotes = (await forexService.GetQuotes(currencyPairs)).ToList();
+                var quotes = (await forexService.GetQuotesAsync(currencyPairs)).ToList();
                 foreach (var quote in quotes)
                 {
-                    System.Console.WriteLine($"Symbol={quote.Symbol}\tPrice={quote.Price:F6}\tBid={quote.Bid:F6}\tAsk={quote.Ask:F6}");
+                    System.Console.WriteLine($"Symbol={quote.Symbol}\tPrice={quote.Price:F6}");
                 }
 
-                System.Console.WriteLine("");
+                System.Console.WriteLine();
             } while (System.Console.ReadKey(true).Key != ConsoleKey.Escape);
         }
     }
